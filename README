@@ -1,0 +1,23 @@
+dm-ys
+=====
+a DataMapper extension that uses html table as its schema and data powerfully like YunkerStar
+
+
+Example
+=======
+
+  class Monster
+    include DataMapper::YunkerStar
+    
+    url "http://ds.gkwiki2.com/47.html"
+    thead "table.style_table thead tr"
+    tbody "table.style_table tbody tr"
+  end
+ 
+  irb(main):001:0> Monster.count
+  => 120
+  irb(main):002:0> Monster.first
+  => #<Monster id=nil LV="2" 種族="妖精" 名称="ピクシー" HP="30" MP="27" ...
+
+
+Copyright (c) 2008 maiha@wota.jp, released under the MIT license
