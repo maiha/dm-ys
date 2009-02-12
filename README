@@ -6,18 +6,22 @@ a DataMapper extension that uses html table as its schema and data powerfully li
 Example
 =======
 
-  class Monster
+  class Maintainer
     include DataMapper::YunkerStar
-    
-    uri "http://ds.gkwiki2.com/47.html"
-    thead "table.style_table thead tr"
-    tbody "table.style_table tbody tr"
+    uri "http://datamapper.org/doku.php?id=gem_maintainers"
   end
- 
-  irb(main):001:0> Monster.count
-  => 120
-  irb(main):002:0> Monster.first
-  => #<Monster id=nil LV="2" 種族="妖精" 名称="ピクシー" HP="30" MP="27" ...
+
+  irb(main):001:0> Maintainer.count
+  => 31
+
+  irb(main):002:0> Maintainer.first
+  => #<Maintainer id=nil _Gem="data_objects" _Maintainer="dbussink" Name="Dirkjan Bussink">
+
+  irb(main):003:0> Maintainer.names
+  => ["_Gem", "_Maintainer", "Name"]
+
+  irb(main):004:0> Maintainer.labels
+  => ["Gem", "Maintainer", "Name"]
 
 
 Copyright (c) 2008 maiha@wota.jp, released under the MIT license

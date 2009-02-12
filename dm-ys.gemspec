@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{dm-ys}
-  s.version = "0.1"
+  s.version = "0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["maiha"]
@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.description = %q{a DataMapper extension that uses html table as its schema and data powerfully like YunkerStar}
   s.email = %q{maiha@wota.jp}
   s.extra_rdoc_files = ["README", "LICENSE"]
-  s.files = ["LICENSE", "README", "Rakefile", "lib/dm-ys.rb", "lib/dm-ys", "lib/dm-ys/base.rb", "lib/dm-ys/memory_repository.rb", "lib/dm-ys/scraper.rb", "lib/dm-ys/cached_accessor.rb", "lib/dm-ys/proxy.rb"]
+  s.files = ["LICENSE", "README", "Rakefile", "lib/dm-ys.rb", "lib/dm-ys", "lib/dm-ys/base.rb", "lib/dm-ys/memory_repository.rb", "lib/dm-ys/scraper.rb", "lib/dm-ys/cached_accessor.rb", "lib/dm-ys/proxy.rb", "spec/guess_spec.rb", "spec/data", "spec/data/ki.html", "spec/data/blank.html", "spec/spec_helper.rb"]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/maiha/dm-ys}
   s.require_paths = ["lib"]

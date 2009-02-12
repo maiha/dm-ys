@@ -21,7 +21,9 @@ module DataMapper
         end
 
         def method_missing(symbol, &block)
-          @klass.send(:define_method, symbol, &block)
+          cached = "__cached__#{symbol}"
+          @klass.send(:define_method, cached, &block)
+          @klass.class_eval("def #{symbol}; @#{cached} ||= #{cached}; end", "(__CACHED_ACCESSOR__)", 1)
         end
       end
     end

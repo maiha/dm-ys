@@ -15,6 +15,7 @@ module DataMapper
         model.class_eval do
           extend ClassMethods
           dsl_accessor :uri
+          dsl_accessor :table
           dsl_accessor :tbody
           dsl_accessor :thead
           property :id, DataMapper::Types::Serial
@@ -28,11 +29,15 @@ module DataMapper
 
         def lazy_load
           loader = Scraper.new(self)
-          loader.labels.each do |name|
+          loader.names.each do |name|
             type = String         # TODO
             property name.intern, type
           end
           return loader
+        end
+
+        def names
+          proxy.names
         end
 
         def labels
@@ -49,7 +54,7 @@ module DataMapper
 
         def all
           @all ||= proxy.entries.map{|array|
-            new(Hash[*proxy.labels.zip(array).flatten])
+            new(Hash[*proxy.names.zip(array).flatten])
           }
         end
 
