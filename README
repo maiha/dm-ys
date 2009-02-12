@@ -9,7 +9,7 @@ Example
   class Monster
     include DataMapper::YunkerStar
     
-    url "http://ds.gkwiki2.com/47.html"
+    uri "http://ds.gkwiki2.com/47.html"
     thead "table.style_table thead tr"
     tbody "table.style_table tbody tr"
   end
