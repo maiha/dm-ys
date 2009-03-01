@@ -1,22 +1,22 @@
 require File.join( File.dirname(__FILE__), "spec_helper" )
 
 describe DataMapper::YunkerStar do
-  class BlankHtml
+  class ::BlankHtml
     include DataMapper::YunkerStar
     uri spec_data_path("blank.html")
   end
 
-  class BlankStyle
+  class ::BlankStyle
     include DataMapper::YunkerStar
     uri spec_data_path("ki.html")
   end
 
-  class TableStyle < BlankStyle
+  class ::TableStyle < BlankStyle
     uri spec_data_path("ki.html")
     table "table.main"
   end
 
-  class TheadStyle < BlankStyle
+  class ::TheadStyle < BlankStyle
     uri spec_data_path("ki.html")
     thead "table.main"
   end
