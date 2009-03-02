@@ -2,15 +2,15 @@
 
 Gem::Specification.new do |s|
   s.name = %q{dm-ys}
-  s.version = "0.2.1"
+  s.version = "0.2.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["maiha"]
-  s.date = %q{2009-03-01}
+  s.date = %q{2009-03-02}
   s.description = %q{a DataMapper extension that uses html table as its schema and data powerfully like YunkerStar}
   s.email = %q{maiha@wota.jp}
   s.extra_rdoc_files = ["README", "LICENSE"]
-  s.files = ["LICENSE", "README", "Rakefile", "lib/dm-ys.rb", "lib/dm-ys", "lib/dm-ys/base.rb", "lib/dm-ys/memory_repository.rb", "lib/dm-ys/scraper.rb", "lib/dm-ys/cached_accessor.rb", "lib/dm-ys/proxy.rb", "spec/guess_spec.rb", "spec/data", "spec/data/cute1.html", "spec/data/ki.html", "spec/data/blank.html", "spec/attribute_spec.rb", "spec/spec_helper.rb", "spec/pagination_spec.rb"]
+  s.files = ["LICENSE", "README", "Rakefile", "lib/dm-ys.rb", "lib/dm-ys", "lib/dm-ys/base.rb", "lib/dm-ys/indexed_property.rb", "lib/dm-ys/memory_repository.rb", "lib/dm-ys/scraper.rb", "lib/dm-ys/cached_accessor.rb", "lib/dm-ys/proxy.rb", "spec/guess_spec.rb", "spec/data", "spec/data/cute1.html", "spec/data/ki.html", "spec/data/blank.html", "spec/indexed_property_spec.rb", "spec/spec_helper.rb", "spec/pagination_spec.rb"]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/maiha/dm-ys}
   s.require_paths = ["lib"]

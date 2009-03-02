@@ -53,8 +53,10 @@ module DataMapper
         end
 
         def all
+          count = 0
           @all ||= proxy.entries.map{|array|
-            new(Hash[*proxy.names.zip(array).flatten])
+            count += 1
+            new(Hash[*proxy.names.zip(array).flatten].merge(:id=>count))
           }
         end
 

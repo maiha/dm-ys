@@ -15,6 +15,7 @@ module DataMapper
       name = 'YunkelStar'
       model.send :include, DataMapper::Resource
       model.send :include, Proxy
+      model.send :include, IndexedProperty
       # model.send :include, MemoryRepository
       model.const_set(name, self) unless model.const_defined?(name)
       extra_inclusions.each { |inclusion| model.send(:include, inclusion) }
