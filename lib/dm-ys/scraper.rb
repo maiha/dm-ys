@@ -13,6 +13,21 @@ module DataMapper
 
       class TableNotFound < RuntimeError; end
 
+      module Utils
+        def constantize(label)
+          require 'cgi'
+          label = CGI.unescapeHTML(label.to_s)
+          label.gsub!(/&[a-z]+;/, '')
+          label.gsub!(/\r?\n/, '')
+          label.gsub!(/\s+/,'')
+          label.delete!('!"#$%&()=~|`{}^-[]/<>:;,.\\-')
+          label.delete!("'")
+          return label
+        end
+
+        module_function :constantize
+      end
+
       attr_reader :html
 
       def initialize(model)
@@ -24,8 +39,21 @@ module DataMapper
       end
 
       def guess_table
-        [max_table_from("table"), max_table_from("table > tbody")].sort_by(&:first).last.last or
+        max_table or
           raise TableNotFound, "set 'table' or 'tbody' manually"
+      end
+
+      def links
+        (doc / "a").map{|i| i[:href]}
+      end
+
+      def inspect
+        attrs = [
+          [ :html,      "#{html.size}bytes" ],
+          [ :names,     names ],
+          [ :entries,   entries.size ],
+        ]
+        "#<#{self.class.name} #{attrs.map { |(k,v)| "@#{k}=#{v.inspect}" } * ' '}>"
       end
 
       cached_accessor do
@@ -40,17 +68,17 @@ module DataMapper
 
       private
 
-        def max_table_from(entry)
+        def max_table
           table = nil
           count = -1
-          doc.search(entry).each do |t|
-            size = t.search("> tr").size
+          doc.search("table").each do |t|
+            size = [t.search("> tr").size, t.search("> tbody > tr").size].max
             if size > count
               count = size
               table = t
             end
           end
-          [count, table]
+          return table
         end
 
         def specified(name)
@@ -69,13 +97,7 @@ module DataMapper
         end
 
         def label2name(label)
-          require 'cgi'
-          label = CGI.unescapeHTML(label)
-          label.gsub!(/&nbsp;/, '')
-          label.gsub!(/\r?\n/, '')
-          label.delete!('!"#$%&()=~|`{}^-[]/<>:; \\')
-          label.delete!("'")
-          label.strip!
+          label = Utils.constantize(label)
 
           if /^([A-Z])/ === label and Object.const_defined?(label)
             label = "_#{label}"

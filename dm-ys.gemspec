@@ -6,11 +6,11 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["maiha"]
-  s.date = %q{2009-03-02}
+  s.date = %q{2009-03-06}
   s.description = %q{a DataMapper extension that uses html table as its schema and data powerfully like YunkerStar}
   s.email = %q{maiha@wota.jp}
   s.extra_rdoc_files = ["README", "LICENSE"]
-  s.files = ["LICENSE", "README", "Rakefile", "lib/dm-ys.rb", "lib/dm-ys", "lib/dm-ys/base.rb", "lib/dm-ys/indexed_property.rb", "lib/dm-ys/memory_repository.rb", "lib/dm-ys/scraper.rb", "lib/dm-ys/cached_accessor.rb", "lib/dm-ys/proxy.rb", "spec/guess_spec.rb", "spec/data", "spec/data/cute1.html", "spec/data/ki.html", "spec/data/blank.html", "spec/indexed_property_spec.rb", "spec/spec_helper.rb", "spec/pagination_spec.rb"]
+  s.files = ["LICENSE", "README", "Rakefile", "lib/dm-ys.rb", "lib/dm-ys", "lib/dm-ys/base.rb", "lib/dm-ys/indexed_property.rb", "lib/dm-ys/memory_repository.rb", "lib/dm-ys/scraper.rb", "lib/dm-ys/cached_accessor.rb", "lib/dm-ys/proxy.rb", "spec/guess_spec.rb", "spec/data", "spec/data/plugins1.html", "spec/data/gem_maintainers.html", "spec/data/plugins2.html", "spec/data/blank.html", "spec/models", "spec/models/gem_maintainer.rb", "spec/models/plugin.rb", "spec/scraper_spec.rb", "spec/indexed_property_spec.rb", "spec/spec_helper.rb", "spec/pagination_spec.rb", "spec/scraper_utils_spec.rb"]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/maiha/dm-ys}
   s.require_paths = ["lib"]

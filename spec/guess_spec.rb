@@ -8,16 +8,16 @@ describe DataMapper::YunkerStar do
 
   class ::BlankStyle
     include DataMapper::YunkerStar
-    uri spec_data_path("ki.html")
+    uri spec_data_path("plugins1.html")
   end
 
   class ::TableStyle < BlankStyle
-    uri spec_data_path("ki.html")
+    uri spec_data_path("plugins1.html")
     table "table.main"
   end
 
   class ::TheadStyle < BlankStyle
-    uri spec_data_path("ki.html")
+    uri spec_data_path("plugins1.html")
     thead "table.main"
   end
 
@@ -36,7 +36,7 @@ describe DataMapper::YunkerStar do
       end
 
       it "should return a right element" do
-        BlankStyle.proxy.guess_table["class"].should == "main"
+        BlankStyle.proxy.guess_table[:class].should == "plugin-list"
       end
 
       it "should raise when the html contains no tables" do
@@ -59,30 +59,31 @@ describe DataMapper::YunkerStar do
         it "should return specified table" do
           table = TableStyle.proxy.table
           table.class.should == Hpricot::Elem
-          table[:class].should == "main"
+          table[:class].should == "plugin-list"
         end
       end
     end
 
     it "should provide thead" do
       BlankStyle.proxy.should respond_to(:thead)
+    end
 
-      describe "#thead" do
-        it "should raise when the html contains no tables" do
-          lambda {
-            BlankHtml.proxy.thead
-          }.should raise_error(DataMapper::YunkerStar::Scraper::TableNotFound)
-        end
+    describe "#thead" do
+      it "should raise when the html contains no tables" do
+        lambda {
+          BlankHtml.proxy.thead
+        }.should raise_error(DataMapper::YunkerStar::Scraper::TableNotFound)
       end
     end
 
     it "should provide labels" do
       BlankStyle.proxy.should respond_to(:labels)
+    end
 
-      describe "#labels" do
-        it "should return th values" do
-          BlankStyle.proxy.labels.map(&:strip).should == %w( col1 col2 col3 col4 )
-        end
+    describe "#labels" do
+      it "should return th values" do
+        BlankStyle.proxy.labels.map(&:strip).should ==
+          ["Name", "Repos", "Registered by", "Description", ""]
       end
     end
 
