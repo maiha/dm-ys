@@ -26,5 +26,14 @@ module DataMapper
     def self.descendants
       @descendants ||= Set.new
     end
+
+    # @api public
+    def self.[](uri)
+      klass = Class.new do
+        include DataMapper::YunkerStar
+      end
+      klass.uri uri
+      return klass
+    end
   end
 end
