@@ -24,4 +24,29 @@ Example
   => ["Gem", "Maintainer", "Name"]
 
 
+Pagination
+==========
+
+Special syntax "uri*" means pagination mode that enables recursive retrieving.
+
+  class Plugin
+    include DataMapper::YunkerStar
+    uri "http://merbi.st/plugins/index?page=1"
+  end
+
+  irb(main):001:0> Plugin.count
+  => 20
+
+This parses only specified uri.
+Append "*" to uri if you want pagination mode.
+  
+  class Plugin
+    include DataMapper::YunkerStar
+    uri "http://merbi.st/plugins/index?page=1*"
+  end
+
+  irb(main):001:0> Plugin.count
+  => 36
+
+
 Copyright (c) 2008 maiha@wota.jp, released under the MIT license

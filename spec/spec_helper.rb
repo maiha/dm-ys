@@ -2,18 +2,21 @@ require "rubygems"
 require "spec"
 require "pathname"
 
-SPEC_ROOT = Pathname(__FILE__).dirname.expand_path
-require SPEC_ROOT + "../lib/dm-ys"
+def spec_root
+  Pathname(__FILE__).dirname.expand_path
+end
 
 def spec_data_path(name)
-  SPEC_ROOT + "data/#{name}"
+  spec_root + "data/#{name}"
 end
 
 def spec_data(name)
   spec_data_path(name).read
 end
 
-Dir.glob(SPEC_ROOT + 'models' + '*.rb').each do |model|
+require spec_root + "../lib/dm-ys"
+
+Dir.glob(spec_root + 'models' + '*.rb').each do |model|
   require model
 end
 

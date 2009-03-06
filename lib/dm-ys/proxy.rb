@@ -24,16 +24,7 @@ module DataMapper
 
       module ClassMethods
         def proxy
-          @proxy ||= lazy_load
-        end
-
-        def lazy_load
-          loader = Scraper.new(self)
-          loader.names.each do |name|
-            type = String         # TODO
-            property name.intern, type
-          end
-          return loader
+          @proxy ||= Scraper.load(self)
         end
 
         def names
@@ -54,9 +45,9 @@ module DataMapper
 
         def all
           count = 0
-          @all ||= proxy.entries.map{|array|
+          @all ||= entries.map{|array|
             count += 1
-            new(Hash[*proxy.names.zip(array).flatten].merge(:id=>count))
+            new(Hash[*names.zip(array).flatten].merge(:id=>count))
           }
         end
 

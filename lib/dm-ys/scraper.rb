@@ -8,10 +8,26 @@ module DataMapper
     require 'open-uri'
     require 'hpricot'
 
-    class Scraper
-      include CachedAccessor
-
+    module Scraper
       class TableNotFound < RuntimeError; end
+
+      def self.paginate?(model)
+        model.uri.to_s[-1] == ?*
+      end
+
+      def self.lookup(model)
+        scraper = paginate?(model) ? Composite : Page
+        scraper.new(model)
+      end
+
+      def self.load(model)
+        loader = lookup(model)
+        loader.register_properties!
+        return loader
+      end
+
+      ######################################################################
+      ### Utils
 
       module Utils
         def constantize(label)
@@ -28,97 +44,182 @@ module DataMapper
         module_function :constantize
       end
 
-      attr_reader :html
+      ######################################################################
+      ### Base Scraper
 
-      def initialize(model)
-        raise ArgumentError, "missing model" unless model
-        raise ArgumentError, "missing uri"   unless model.uri
-        @model = model
-        @html  = NKF.nkf('-w', open(model.uri).read)
-        @invalid_name_count = 0
+      class Base
+        include CachedAccessor
+
+        def initialize(model, *args)
+          raise ArgumentError, "missing model" unless model
+          raise ArgumentError, "missing uri"   unless model.uri
+          @model = model
+        end
+        [:names, :labels, :entries].each do |method|
+          define_method(method) {raise NotImplementedError, method.to_s}
+        end
+
+        def uri
+          @uri || @model.uri.to_s.chomp('*')
+        end
+
+        def register_properties!
+          names.each do |name|
+            type = String         # TODO
+            @model.property name.intern, type
+          end
+        end
       end
 
-      def guess_table
-        max_table or
-          raise TableNotFound, "set 'table' or 'tbody' manually"
-      end
+      ######################################################################
+      ### Page Scraper
 
-      def links
-        (doc / "a").map{|i| i[:href]}
-      end
+      class Page < Base
+        attr_reader :html
 
-      def inspect
-        attrs = [
-          [ :html,      "#{html.size}bytes" ],
-          [ :names,     names ],
-          [ :entries,   entries.size ],
-        ]
-        "#<#{self.class.name} #{attrs.map { |(k,v)| "@#{k}=#{v.inspect}" } * ' '}>"
-      end
+        def initialize(model, uri = nil)
+          super
+          @uri  = uri
+          @html = NKF.nkf('-w', open(self.uri).read)
+          @invalid_name_count = 0
+        end
 
-      cached_accessor do
-        doc     {Hpricot(@html)}
-        table   {specified(:table) or guess_table}
-        thead   {specified(:thead) or table.search("> thead").first or table}
-        tbody   {specified(:tbody) or table.search("> tbody").first or table}
-        names   {labels.map{|i| label2name(i)}}
-        labels  {thead.search("> tr").first.search("> td|th").map{|i|strip_tags(i.inner_html)}}
-        entries {tbody.search("> tr").map{|tr| tr.search("> td").map{|i|strip_tags(i.inner_html)}}.delete_if{|i|i.blank?}}
-      end
+        def guess_table
+          max_table or
+            raise TableNotFound, "set 'table' or 'tbody' manually"
+        end
 
-      private
+        def pagination_links
+          base = URI.parse(uri.split('?').first)
+          urls = (doc / "a").map{|i| i[:href] =~ /^http/ ? i[:href] : (base+i[:href]).to_s}.uniq
+          urls.select{|url| /^#{Regexp.escape(base.to_s)}/ === url}
+        end
 
-        def max_table
-          table = nil
-          count = -1
-          doc.search("table").each do |t|
-            size = [t.search("> tr").size, t.search("> tbody > tr").size].max
-            if size > count
-              count = size
-              table = t
+        def inspect
+          attrs = [
+            [ :html,      "#{html.size}bytes" ],
+            [ :names,     names ],
+            [ :entries,   entries.size ],
+          ]
+          "#<#{self.class.name} #{attrs.map { |(k,v)| "@#{k}=#{v.inspect}" } * ' '}>"
+        end
+
+        cached_accessor do
+          doc     {Hpricot(@html)}
+          table   {specified(:table) or guess_table}
+          thead   {specified(:thead) or table.search("> thead").first or table}
+          tbody   {specified(:tbody) or table.search("> tbody").first or table}
+          names   {labels.map{|i| label2name(i)}}
+          labels  {thead.search("> tr").first.search("> td|th").map{|i|strip_tags(i.inner_html)}}
+          entries {tbody.search("> tr").map{|tr| tr.search("> td").map{|i|strip_tags(i.inner_html)}}.delete_if{|i|i.blank?}}
+          count   {entries.size}
+        end
+
+        private
+
+          def max_table
+            table = nil
+            count = -1
+            doc.search("table").each do |t|
+              size = [t.search("> tr").size, t.search("> tbody > tr").size].max
+              if size > count
+                count = size
+                table = t
+              end
+            end
+            return table
+          end
+
+          def specified(name)
+            @model.respond_to?(name)    or raise ArgumentError, "invalid selector name: #{name}"
+            css = @model.__send__(name) or return nil
+
+            element = doc.search(css)
+            case element
+            when Hpricot::Elem
+              return element
+            when Hpricot::Elements
+              return element.first
+            else
+              return nil
             end
           end
-          return table
-        end
 
-        def specified(name)
-          @model.respond_to?(name)    or raise ArgumentError, "invalid selector name: #{name}"
-          css = @model.__send__(name) or return nil
+          def label2name(label)
+            label = Utils.constantize(label)
 
-          element = doc.search(css)
-          case element
-          when Hpricot::Elem
-            return element
-          when Hpricot::Elements
-            return element.first
-          else
-            return nil
+            if /^([A-Z])/ === label and Object.const_defined?(label)
+              label = "_#{label}"
+            end
+            if label.blank? or @model.respond_to?(label, true)
+              new_name_for(label)
+            elsif /^[0-9]/ === label
+              "_#{label}"
+            else
+              label
+            end
           end
-        end
 
-        def label2name(label)
-          label = Utils.constantize(label)
-
-          if /^([A-Z])/ === label and Object.const_defined?(label)
-            label = "_#{label}"
+          def new_name_for(label)
+            @invalid_name_count += 1
+            "col_#{@invalid_name_count}"
           end
-          if label.blank? or @model.respond_to?(label, true)
-            new_name_for(label)
-          elsif /^[0-9]/ === label
-            "_#{label}"
-          else
-            label
+
+          def strip_tags(html)
+            html.gsub(/<.*?>/, '').strip
           end
+      end
+
+      ######################################################################
+      ### Composite Scraper
+
+      class Composite < Base
+        def pages
+          @pages ||= execute
         end
 
-        def new_name_for(label)
-          @invalid_name_count += 1
-          "col_#{@invalid_name_count}"
+        def count
+          pages.map(&:count).inject(0){|i,v| i+v}
         end
 
-        def strip_tags(html)
-          html.gsub(/<.*?>/, '').strip
+        def names
+          pages.first.names
         end
+
+        def labels
+          pages.first.labels
+        end
+
+        def entries
+          pages.inject([]){|a,p| a+p.entries}
+        end
+
+        private
+          def execute
+            visit(uri)
+            valid_pages
+          end
+
+          def valid_pages
+            loaded_pages.values.compact
+          end
+
+          def loaded_pages
+            @loaded_pages ||= {} # url => page object
+          end
+
+          def visit(uri)
+            return if loaded_pages[uri]
+            page = Page.new(@model, uri)
+            base = valid_pages.first
+            if !base or base.names == page.names
+              loaded_pages[uri] = page
+            else
+              loaded_pages[uri] = nil
+            end
+            page.pagination_links.each{|uri| visit(uri)}
+          end
+      end
 
     end
   end

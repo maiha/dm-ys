@@ -2,7 +2,7 @@ require File.join( File.dirname(__FILE__), "spec_helper" )
 
 describe DataMapper::YunkerStar do
   before(:each) do
-    @plugin = Plugin.first
+    @plugin = Plugin1.first
   end
 
   it "should provide #[]" do
