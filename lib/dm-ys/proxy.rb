@@ -47,11 +47,15 @@ module DataMapper
         end
 
         def all
-          count = 0
-          @all ||= records.map{|array|
-            count += 1
-            new(Hash[*names.zip(array).flatten].merge(:id=>count))
-          }
+          unless @records
+            @records = []
+            records.each_with_index do |values, id|
+              record = new(Hash[*names.zip(values).flatten].merge(:id=>id+1))
+              record.elements = proxy.element_for(values)
+              @records << record
+            end
+          end
+          @records
         end
 
         def first

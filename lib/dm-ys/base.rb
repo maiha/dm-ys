@@ -12,10 +12,11 @@ module DataMapper
 
     # @api private
     def self.included(model)
-      name = 'YunkelStar'
+      name = 'YS'
       model.send :include, DataMapper::Resource
       model.send :include, Proxy
       model.send :include, IndexedProperty
+      model.send :include, ElementProperty
       # model.send :include, MemoryRepository
       model.const_set(name, self) unless model.const_defined?(name)
       extra_inclusions.each { |inclusion| model.send(:include, inclusion) }

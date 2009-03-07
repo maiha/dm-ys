@@ -114,14 +114,31 @@ module DataMapper
           Digest::SHA1.hexdigest(body)
         end
 
+        def element_for(record)
+          parse_tbody
+          @record2elements[record]
+        end
+
         cached_accessor do
-          doc     {Hpricot(@html)}
-          table   {specified(:table) or guess_table}
-          thead   {specified(:thead) or table.search("> thead").first or table}
-          tbody   {specified(:tbody) or table.search("> tbody").first or table}
-          names   {labels.map{|i| label2name(i)}}
-          labels  {thead.search("> tr").first.search("> td|th").map{|i|strip_tags(i.inner_html)}}
-          records {tbody.search("> tr").map{|tr| tr.search("> td").map{|i|strip_tags(i.inner_html)}}.delete_if{|i|i.blank?}}
+          doc      {Hpricot(@html)}
+          table    {specified(:table) or guess_table}
+          thead    {specified(:thead) or table.search("> thead").first or table}
+          tbody    {specified(:tbody) or table.search("> tbody").first or table}
+          names    {labels.map{|i| label2name(i)}}
+          labels   {thead.search("> tr").first.search("> td|th").map{|i|strip_tags(i.inner_html)}}
+          records  {parse_tbody; @records}
+
+          parse_tbody {
+            @record2elements = {}
+            @records  = []
+            tbody.search("> tr").each do |tr|
+              elems  = tr.search("> td")
+              record = elems.map{|i|strip_tags(i.inner_html)}
+              # .delete_if{|i|i.blank?}
+              @record2elements[record] = elems
+              @records << record
+            end
+          }
         end
 
         private
@@ -209,6 +226,14 @@ module DataMapper
             end
           end
           return records
+        end
+
+        def element_for(record)
+          pages.each do |page|
+            element = page.element_for(record)
+            return element if element
+          end
+          return nil
         end
 
         private

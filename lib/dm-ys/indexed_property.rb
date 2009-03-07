@@ -13,17 +13,21 @@ module DataMapper
     class InvalidIndex < RuntimeError; end
 
     module IndexedProperty
-      def [](key)
+      def normalized_property_for(key)
         case key
         when Integer
-          self[properties.map(&:name)[key]]
+          properties.map(&:name)[key]
         when String
-          attributes[key.intern]
+          key.intern
         when Symbol
-          attributes[key]
+          key
         else
           raise InvalidIndex, "expected Integer/String/Symbol, but got #{key.class}"
         end
+      end
+
+      def [](key)
+        attributes[normalized_property_for(key)]
       end
     end
 
