@@ -29,10 +29,11 @@ module DataMapper
 
     # @api public
     def self.[](uri)
-      klass = Class.new do
+      klass = Class.new
+      klass.class_eval do
         include DataMapper::YunkerStar
+        self.uri uri
       end
-      klass.uri uri
       return klass
     end
   end

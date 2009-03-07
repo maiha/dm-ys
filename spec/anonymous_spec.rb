@@ -19,6 +19,16 @@ describe DataMapper::YunkerStar do
       @ys.ancestors.should be_include(DataMapper::YunkerStar)
     end
 
+    it "should have ys option" do
+      @ys.should respond_to(:ys)
+    end
+
+    describe ".ys" do
+      it "should return a kind of Config" do
+        @ys.ys.should be_kind_of(DataMapper::YunkerStar::Config)
+      end
+    end
+
     it "should set uri" do
       @ys.uri.should == @uri
     end
