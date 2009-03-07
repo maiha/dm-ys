@@ -1,5 +1,5 @@
 module DataMapper
-  module YunkerStar
+  module YS
     ######################################################################
     ### MemoryRepository
 

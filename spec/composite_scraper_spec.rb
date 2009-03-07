@@ -1,8 +1,8 @@
 require File.join( File.dirname(__FILE__), "spec_helper" )
 
-describe DataMapper::YunkerStar::Scraper::Composite do
+describe DataMapper::YS::Scraper::Composite do
   before(:each) do
-    @scraper = DataMapper::YunkerStar::Scraper::Composite.new(Plugin)
+    @scraper = DataMapper::YS::Scraper::Composite.new(Plugin)
   end
 
   it "should provide #uri" do
@@ -43,7 +43,7 @@ describe DataMapper::YunkerStar::Scraper::Composite do
 
   describe "#names" do
     it "should return same value as Plugin" do
-      @scraper.names.should == DataMapper::YunkerStar::Scraper::Page.new(Plugin1).names
+      @scraper.names.should == DataMapper::YS::Scraper::Page.new(Plugin1).names
     end
   end
 
@@ -53,7 +53,7 @@ describe DataMapper::YunkerStar::Scraper::Composite do
 
   describe "#labels" do
     it "should return same value as Plugin" do
-      @scraper.labels.should == DataMapper::YunkerStar::Scraper::Page.new(Plugin1).labels
+      @scraper.labels.should == DataMapper::YS::Scraper::Page.new(Plugin1).labels
     end
   end
 

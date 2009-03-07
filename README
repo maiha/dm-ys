@@ -7,7 +7,7 @@ Example
 =======
 
   class Maintainer
-    include DataMapper::YunkerStar
+    include DataMapper::YS
     uri "http://datamapper.org/doku.php?id=gem_maintainers"
   end
 
@@ -24,13 +24,28 @@ Example
   => ["Gem", "Maintainer", "Name"]
 
 
+Anonymous class
+===============
+
+[] is a syntax sugar for generating anonymous class
+
+  Wota = DataMapper::YS["http://wota.jp"]
+
+is equivalent to
+
+  class Wota
+    include DataMapper::YS
+    uri "http://wota.jp"
+  end
+
+
 Pagination
 ==========
 
-Special syntax "uri*" means pagination mode that enables recursive retrieving.
+Special syntax "URI*" means pagination mode that enables recursive retrieving.
 
   class Plugin
-    include DataMapper::YunkerStar
+    include DataMapper::YS
     uri "http://merbi.st/plugins/index?page=1"
   end
 
@@ -41,12 +56,16 @@ This parses only specified uri.
 Append "*" to uri if you want pagination mode.
   
   class Plugin
-    include DataMapper::YunkerStar
+    include DataMapper::YS
     uri "http://merbi.st/plugins/index?page=1*"
   end
 
   irb(main):001:0> Plugin.count
   => 36
 
+
+TODO
+====
+* store link information for each columns
 
 Copyright (c) 2008 maiha@wota.jp, released under the MIT license

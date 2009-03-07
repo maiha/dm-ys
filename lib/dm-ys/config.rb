@@ -1,5 +1,5 @@
 module DataMapper
-  module YunkerStar
+  module YS
     class Config
       def self.default
         {:max_pages=>100, :uniq=>true}

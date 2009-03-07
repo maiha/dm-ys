@@ -1,5 +1,5 @@
 module DataMapper
-  module YunkerStar
+  module YS
     # @api public
     def self.append_inclusions(*inclusions)
       extra_inclusions.concat inclusions
@@ -31,7 +31,7 @@ module DataMapper
     def self.[](uri)
       klass = Class.new
       klass.class_eval do
-        include DataMapper::YunkerStar
+        include DataMapper::YS
         self.uri uri
       end
       return klass

@@ -1,10 +1,10 @@
 require File.join( File.dirname(__FILE__), "spec_helper" )
 
-describe DataMapper::YunkerStar::Scraper::Utils  do
-  include DataMapper::YunkerStar::Scraper::Utils
+describe DataMapper::YS::Scraper::Utils  do
+  include DataMapper::YS::Scraper::Utils
 
   it "should provide .constantize" do
-    DataMapper::YunkerStar::Scraper::Utils.should respond_to(:constantize)
+    DataMapper::YS::Scraper::Utils.should respond_to(:constantize)
   end
 
   describe ".constantize" do

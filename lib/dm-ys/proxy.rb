@@ -1,10 +1,10 @@
 module DataMapper
-  module YunkerStar
+  module YS
 
     # ==== Example
     #
     #   Class Foo
-    #     include DataMapper::YunkerStar
+    #     include DataMapper::YS
     #
     #     uri   "http://ds.gkwiki2.com/47.html"
     #     thead "table.style_table thead tr"
@@ -18,7 +18,7 @@ module DataMapper
           dsl_accessor :table
           dsl_accessor :tbody
           dsl_accessor :thead
-          dsl_accessor :ys, :default=>proc{|*a| DataMapper::YunkerStar::Config.new}
+          dsl_accessor :ys, :default=>proc{|*a| DataMapper::YS::Config.new}
           property :id, DataMapper::Types::Serial
         end
       end

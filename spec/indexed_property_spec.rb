@@ -1,6 +1,6 @@
 require File.join( File.dirname(__FILE__), "spec_helper" )
 
-describe DataMapper::YunkerStar do
+describe DataMapper::YS do
   before(:each) do
     @plugin = Plugin1.first
   end
@@ -25,7 +25,7 @@ describe DataMapper::YunkerStar do
     it "should raise InvalidIndex for unknown key" do
       lambda {
         @plugin[Object]
-      }.should raise_error(DataMapper::YunkerStar::InvalidIndex)
+      }.should raise_error(DataMapper::YS::InvalidIndex)
     end
   end
 

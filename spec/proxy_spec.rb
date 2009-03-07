@@ -1,13 +1,13 @@
 require File.join( File.dirname(__FILE__), "spec_helper" )
 
-describe DataMapper::YunkerStar do
+describe DataMapper::YS do
   class ::BlankHtml
-    include DataMapper::YunkerStar
+    include DataMapper::YS
     uri spec_data_path("blank.html")
   end
 
   class ::BlankStyle
-    include DataMapper::YunkerStar
+    include DataMapper::YS
     uri spec_data_path("plugins1.html")
   end
 
@@ -30,12 +30,12 @@ describe DataMapper::YunkerStar do
 
   describe ".ys" do
     it "should return a ys config" do
-      Plugin.ys.should be_kind_of(DataMapper::YunkerStar::Config)
+      Plugin.ys.should be_kind_of(DataMapper::YS::Config)
     end
 
     describe "[:max_pages]" do
       class NetworkUnreachable
-        include DataMapper::YunkerStar
+        include DataMapper::YS
         uri "http://merbi.st/plugins/index?page=1*"
         ys[:max_pages] = 0
       end
@@ -47,7 +47,7 @@ describe DataMapper::YunkerStar do
       it "should raise MaxPagesOverflow when count of visited sites exceeds :max_pages value" do
         lambda {
           NetworkUnreachable.count
-        }.should raise_error(DataMapper::YunkerStar::Proxy::MaxPagesOverflow)
+        }.should raise_error(DataMapper::YS::Proxy::MaxPagesOverflow)
       end
     end
   end
@@ -76,7 +76,7 @@ describe DataMapper::YunkerStar do
       it "should raise when the html contains no tables" do
         lambda {
           BlankHtml.proxy.guess_table
-        }.should raise_error(DataMapper::YunkerStar::Scraper::TableNotFound)
+        }.should raise_error(DataMapper::YS::Scraper::TableNotFound)
       end
     end
 
@@ -87,7 +87,7 @@ describe DataMapper::YunkerStar do
         it "should raise when the html contains no tables" do
           lambda {
             BlankHtml.proxy.table
-          }.should raise_error(DataMapper::YunkerStar::Scraper::TableNotFound)
+          }.should raise_error(DataMapper::YS::Scraper::TableNotFound)
         end
 
         it "should return specified table" do
@@ -106,7 +106,7 @@ describe DataMapper::YunkerStar do
       it "should raise when the html contains no tables" do
         lambda {
           BlankHtml.proxy.thead
-        }.should raise_error(DataMapper::YunkerStar::Scraper::TableNotFound)
+        }.should raise_error(DataMapper::YS::Scraper::TableNotFound)
       end
     end
 

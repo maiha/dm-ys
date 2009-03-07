@@ -1,8 +1,8 @@
 require File.join( File.dirname(__FILE__), "spec_helper" )
 
-describe DataMapper::YunkerStar::Proxy  do
+describe DataMapper::YS::Proxy  do
   before(:each) do
-    @scraper = DataMapper::YunkerStar::Scraper::Page.new(Plugin1)
+    @scraper = DataMapper::YS::Scraper::Page.new(Plugin1)
   end
 
   it "should provide #uri" do

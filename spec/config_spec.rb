@@ -1,8 +1,8 @@
 require File.join( File.dirname(__FILE__), "spec_helper" )
 
-describe DataMapper::YunkerStar::Config do
+describe DataMapper::YS::Config do
   before(:each) do
-    @config = DataMapper::YunkerStar::Config.new
+    @config = DataMapper::YS::Config.new
   end
 
   it "should provide []" do
@@ -25,17 +25,17 @@ describe DataMapper::YunkerStar::Config do
     end
 
     it "should return true when :uniq is set to :page" do
-      config = DataMapper::YunkerStar::Config.new(:uniq=>:page)
+      config = DataMapper::YS::Config.new(:uniq=>:page)
       config.uniq_page?.should == true
     end
 
     it "should return true when :uniq is set to :entry" do
-      config = DataMapper::YunkerStar::Config.new(:uniq=>:entry)
+      config = DataMapper::YS::Config.new(:uniq=>:entry)
       config.uniq_page?.should == true
     end
 
     it "should return false when :uniq is set to false" do
-      config = DataMapper::YunkerStar::Config.new(:uniq=>false)
+      config = DataMapper::YS::Config.new(:uniq=>false)
       config.uniq_page?.should == false
     end
   end
@@ -50,17 +50,17 @@ describe DataMapper::YunkerStar::Config do
     end
 
     it "should return false when :uniq is set to :page" do
-      config = DataMapper::YunkerStar::Config.new(:uniq=>:page)
+      config = DataMapper::YS::Config.new(:uniq=>:page)
       config.uniq_entry?.should == false
     end
 
     it "should return true when :uniq is set to :entry" do
-      config = DataMapper::YunkerStar::Config.new(:uniq=>:entry)
+      config = DataMapper::YS::Config.new(:uniq=>:entry)
       config.uniq_entry?.should == true
     end
 
     it "should return false when :uniq is set to :page" do
-      config = DataMapper::YunkerStar::Config.new(:uniq=>false)
+      config = DataMapper::YS::Config.new(:uniq=>false)
       config.uniq_entry?.should == false
     end
 

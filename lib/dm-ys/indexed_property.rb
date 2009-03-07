@@ -1,10 +1,10 @@
 module DataMapper
-  module YunkerStar
+  module YS
 
     # ==== Example
     #
     #   Class Foo
-    #     include DataMapper::YunkerStar
+    #     include DataMapper::YS
     #     property :id, Serial
     #
     #   foo = Foo.new
