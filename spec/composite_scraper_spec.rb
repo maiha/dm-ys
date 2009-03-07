@@ -57,13 +57,13 @@ describe DataMapper::YS::Scraper::Composite do
     end
   end
 
-  it "should provide #entries" do
-    @scraper.should respond_to(:entries)
+  it "should provide #records" do
+    @scraper.should respond_to(:records)
   end
 
-  describe "#entries" do
+  describe "#records" do
     it "should return same value as Plugin" do
-      @scraper.entries.should == (Plugin1.entries + Plugin2.entries)
+      @scraper.records.should == (Plugin1.records + Plugin2.records)
     end
   end
 
@@ -72,14 +72,14 @@ describe DataMapper::YS::Scraper::Composite do
       SortedPlugin.proxy.pages.size.should == 6
     end
 
-    describe "#entries" do
-      it "should return duplicate entries" do
-        SortedPlugin.entries.sort.should == ((SortedPlugin1.entries + SortedPlugin2.entries)*3).sort
+    describe "#records" do
+      it "should return duplicate records" do
+        SortedPlugin.records.sort.should == ((SortedPlugin1.records + SortedPlugin2.records)*3).sort
       end
     end
 
     describe "#count" do
-      it "should return duplicate entries" do
+      it "should return duplicate records" do
         SortedPlugin.count.should == (SortedPlugin1.count + SortedPlugin2.count)*3
       end
     end
@@ -90,9 +90,9 @@ describe DataMapper::YS::Scraper::Composite do
       SortedPluginWithUniqPage.proxy.pages.size.should == 2
     end
 
-    describe "#entries" do
+    describe "#records" do
       it "should return same value as Plugin" do
-        SortedPluginWithUniqPage.entries.should == (SortedPlugin1.entries + SortedPlugin2.entries)
+        SortedPluginWithUniqPage.records.should == (SortedPlugin1.records + SortedPlugin2.records)
       end
     end
 

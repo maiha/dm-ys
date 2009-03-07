@@ -38,17 +38,17 @@ module DataMapper
           proxy.labels
         end
 
-        def entries
-          proxy.entries
+        def records
+          proxy.records
         end
 
         def count
-          entries.size
+          records.size
         end
 
         def all
           count = 0
-          @all ||= entries.map{|array|
+          @all ||= records.map{|array|
             count += 1
             new(Hash[*names.zip(array).flatten].merge(:id=>count))
           }

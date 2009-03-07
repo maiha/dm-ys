@@ -56,12 +56,12 @@ module DataMapper
           raise ArgumentError, "missing uri"   unless model.uri
           @model = model
         end
-        [:names, :labels, :entries].each do |method|
+        [:names, :labels, :records].each do |method|
           define_method(method) {raise NotImplementedError, method.to_s}
         end
 
         def count
-          entries.size
+          records.size
         end
 
         def uri
@@ -104,13 +104,13 @@ module DataMapper
           attrs = [
             [ :html,      "#{html.size}bytes" ],
             [ :names,     names ],
-            [ :entries,   count ],
+            [ :records,   count ],
           ]
           "#<#{self.class.name} #{attrs.map { |(k,v)| "@#{k}=#{v.inspect}" } * ' '}>"
         end
 
         def page_hash
-          body = entries.flatten.join("\t")
+          body = records.flatten.join("\t")
           Digest::SHA1.hexdigest(body)
         end
 
@@ -121,7 +121,7 @@ module DataMapper
           tbody   {specified(:tbody) or table.search("> tbody").first or table}
           names   {labels.map{|i| label2name(i)}}
           labels  {thead.search("> tr").first.search("> td|th").map{|i|strip_tags(i.inner_html)}}
-          entries {tbody.search("> tr").map{|tr| tr.search("> td").map{|i|strip_tags(i.inner_html)}}.delete_if{|i|i.blank?}}
+          records {tbody.search("> tr").map{|tr| tr.search("> td").map{|i|strip_tags(i.inner_html)}}.delete_if{|i|i.blank?}}
         end
 
         private
@@ -195,11 +195,11 @@ module DataMapper
           pages.first.labels
         end
 
-        def entries
+        def records
           records = []
           digests = Set.new
           pages.each do |page|
-            page.entries.each do |entry|
+            page.records.each do |entry|
               if config.uniq_entry?
                 sha1 = Digest::SHA1.hexdigest(entry.join("\t"))
                 next if digests.include?(sha1)
