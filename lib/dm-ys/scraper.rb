@@ -7,6 +7,7 @@ module DataMapper
     require 'nkf'
     require 'open-uri'
     require 'hpricot'
+    require 'digest/sha1'
 
     module Scraper
       class TableNotFound < RuntimeError; end
@@ -59,6 +60,10 @@ module DataMapper
           define_method(method) {raise NotImplementedError, method.to_s}
         end
 
+        def count
+          entries.size
+        end
+
         def uri
           @uri || @model.uri.to_s.chomp('*')
         end
@@ -99,9 +104,14 @@ module DataMapper
           attrs = [
             [ :html,      "#{html.size}bytes" ],
             [ :names,     names ],
-            [ :entries,   entries.size ],
+            [ :entries,   count ],
           ]
           "#<#{self.class.name} #{attrs.map { |(k,v)| "@#{k}=#{v.inspect}" } * ' '}>"
+        end
+
+        def page_hash
+          body = entries.flatten.join("\t")
+          Digest::SHA1.hexdigest(body)
         end
 
         cached_accessor do
@@ -112,7 +122,6 @@ module DataMapper
           names   {labels.map{|i| label2name(i)}}
           labels  {thead.search("> tr").first.search("> td|th").map{|i|strip_tags(i.inner_html)}}
           entries {tbody.search("> tr").map{|tr| tr.search("> td").map{|i|strip_tags(i.inner_html)}}.delete_if{|i|i.blank?}}
-          count   {entries.size}
         end
 
         private
@@ -178,10 +187,6 @@ module DataMapper
           @pages ||= execute
         end
 
-        def count
-          pages.map(&:count).inject(0){|i,v| i+v}
-        end
-
         def names
           pages.first.names
         end
@@ -191,35 +196,66 @@ module DataMapper
         end
 
         def entries
-          pages.inject([]){|a,p| a+p.entries}
+          records = []
+          digests = Set.new
+          pages.each do |page|
+            page.entries.each do |entry|
+              if config.uniq_entry?
+                sha1 = Digest::SHA1.hexdigest(entry.join("\t"))
+                next if digests.include?(sha1)
+                digests << sha1
+              end
+              records << entry
+            end
+          end
+          return records
         end
 
         private
           def execute
             visit(uri)
-            valid_pages
+            uniq_pages
           end
 
-          def valid_pages
-            loaded_pages.values.compact
+          def config
+            @model.ys
+          end
+
+          def uniq_pages
+            return loaded_pages unless config.uniq_page?
+
+            digests = Set.new
+            loaded_pages.select do |page|
+              sha1 = page.page_hash
+              if digests.include?(sha1)
+                false
+              else
+                digests << sha1
+                true
+              end
+            end
           end
 
           def loaded_pages
-            @loaded_pages ||= {} # url => page object
+            loaded_pages_hash.values.compact
           end
 
-          def visit(uri, options = {:count => 0})
-            return if loaded_pages[uri]
-            raise Proxy::MaxPagesOverflow if (options[:count]+=1) > @model.ys[:max_pages]
+          def loaded_pages_hash
+            @loaded_pages_hash ||= {} # url => page object
+          end
+
+          def visit(uri, runtime_options = {:count => 0})
+            return if loaded_pages_hash[uri]
+            raise Proxy::MaxPagesOverflow if (runtime_options[:count]+=1) > @model.ys[:max_pages]
             
             page = Page.new(@model, uri)
-            base = valid_pages.first
+            base = loaded_pages.first
             if !base or base.names == page.names
-              loaded_pages[uri] = page
+              loaded_pages_hash[uri] = page
             else
-              loaded_pages[uri] = nil
+              loaded_pages_hash[uri] = nil
             end
-            page.pagination_links.each{|uri| visit(uri, options)}
+            page.pagination_links.each{|uri| visit(uri, runtime_options)}
           end
       end
 

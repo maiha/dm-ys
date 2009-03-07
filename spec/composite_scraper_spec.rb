@@ -66,4 +66,56 @@ describe DataMapper::YunkerStar::Scraper::Composite do
       @scraper.entries.should == (Plugin1.entries + Plugin2.entries)
     end
   end
+
+  describe "SortedPlugin" do
+    it "should return 6 pages" do
+      SortedPlugin.proxy.pages.size.should == 6
+    end
+
+    describe "#entries" do
+      it "should return duplicate entries" do
+        SortedPlugin.entries.sort.should == ((SortedPlugin1.entries + SortedPlugin2.entries)*3).sort
+      end
+    end
+
+    describe "#count" do
+      it "should return duplicate entries" do
+        SortedPlugin.count.should == (SortedPlugin1.count + SortedPlugin2.count)*3
+      end
+    end
+  end
+
+  describe "SortedPlugin with uniq page option" do
+    it "should return 2 pages" do
+      SortedPluginWithUniqPage.proxy.pages.size.should == 2
+    end
+
+    describe "#entries" do
+      it "should return same value as Plugin" do
+        SortedPluginWithUniqPage.entries.should == (SortedPlugin1.entries + SortedPlugin2.entries)
+      end
+    end
+
+    describe "#count" do
+      it "should return same value as Plugin" do
+        SortedPluginWithUniqPage.count.should == (SortedPlugin1.count + SortedPlugin2.count)
+      end
+    end
+  end
+
+  describe "UniqPlugin" do
+    it "should return 2 pages" do
+      UniqPlugin.proxy.pages.size.should == 2
+    end
+
+    describe "#count" do
+      it "should return same value as Plugin" do
+        UniqPlugin1.count.should == 20
+        UniqPlugin2.count.should == 4
+        UniqPlugin .count.should == 22
+      end
+    end
+  end
+
+
 end

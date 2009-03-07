@@ -31,8 +31,21 @@ rescue LoadError
   exit
 end
 
-URI::Mapping.merge!(
+mapping = {
+  # plugin (paginated)
   "http://merbi.st/plugins/index?page=1" => spec_data_path("plugins1.html"),
-  "http://merbi.st/plugins/index?page=2" => spec_data_path("plugins2.html")
-)
+  "http://merbi.st/plugins/index?page=2" => spec_data_path("plugins2.html"),
 
+  # plugin + uniq
+  "http://merbi.st/plugins/uniq?page=1" => spec_data_path("uniq1.html"),
+  "http://merbi.st/plugins/uniq?page=2" => spec_data_path("uniq2.html"),
+
+  # plugin + sorted
+  "http://merbi.st/plugins/sorted?page=1"            => spec_data_path("sorted1.html"),
+  "http://merbi.st/plugins/sorted?page=1&sort=name1" => spec_data_path("sorted1.html"),
+  "http://merbi.st/plugins/sorted?page=1&sort=name2" => spec_data_path("sorted1.html"),
+  "http://merbi.st/plugins/sorted?page=2"            => spec_data_path("sorted2.html"),
+  "http://merbi.st/plugins/sorted?page=2&sort=name1" => spec_data_path("sorted2.html"),
+  "http://merbi.st/plugins/sorted?page=2&sort=name2" => spec_data_path("sorted2.html"),
+}
+URI::Mapping.merge!(mapping)

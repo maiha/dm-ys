@@ -29,5 +29,14 @@ describe DataMapper::YunkerStar::Proxy  do
     @scraper.respond_to?(:label2name, true).should == true
   end
 
+  it "should provide #page_hash" do
+    @scraper.should respond_to(:page_hash)
+  end
+
+  describe "#page_hash" do
+    it "should return a string" do
+      @scraper.page_hash.should be_kind_of(String)
+    end
+  end
 
 end

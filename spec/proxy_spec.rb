@@ -22,19 +22,15 @@ describe DataMapper::YunkerStar do
   end
 
   ######################################################################
-  ### Option
+  ### Config
 
   it "should provide .ys" do
     Plugin.should respond_to(:ys)
   end
 
   describe ".ys" do
-    it "should return a hash" do
-      Plugin.ys.should be_kind_of(Hash)
-    end
-
-    it "should provide :max_pages option" do
-      Plugin.ys.should be_include(:max_pages)
+    it "should return a ys config" do
+      Plugin.ys.should be_kind_of(DataMapper::YunkerStar::Config)
     end
 
     describe "[:max_pages]" do
@@ -54,7 +50,6 @@ describe DataMapper::YunkerStar do
         }.should raise_error(DataMapper::YunkerStar::Proxy::MaxPagesOverflow)
       end
     end
-
   end
 
   ######################################################################

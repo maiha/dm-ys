@@ -18,7 +18,7 @@ module DataMapper
           dsl_accessor :table
           dsl_accessor :tbody
           dsl_accessor :thead
-          dsl_accessor :ys, :default=>{:max_pages=>100}
+          dsl_accessor :ys, :default=>proc{|*a| DataMapper::YunkerStar::Config.new}
           property :id, DataMapper::Types::Serial
         end
       end
