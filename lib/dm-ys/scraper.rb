@@ -208,8 +208,10 @@ module DataMapper
             @loaded_pages ||= {} # url => page object
           end
 
-          def visit(uri)
+          def visit(uri, options = {:count => 0})
             return if loaded_pages[uri]
+            raise Proxy::MaxPagesOverflow if (options[:count]+=1) > @model.ys[:max_pages]
+            
             page = Page.new(@model, uri)
             base = valid_pages.first
             if !base or base.names == page.names
@@ -217,7 +219,7 @@ module DataMapper
             else
               loaded_pages[uri] = nil
             end
-            page.pagination_links.each{|uri| visit(uri)}
+            page.pagination_links.each{|uri| visit(uri, options)}
           end
       end
 

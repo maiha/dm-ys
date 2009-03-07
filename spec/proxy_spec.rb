@@ -21,7 +21,46 @@ describe DataMapper::YunkerStar do
     thead "table.main"
   end
 
-  it "should provide proxy" do
+  ######################################################################
+  ### Option
+
+  it "should provide .ys" do
+    Plugin.should respond_to(:ys)
+  end
+
+  describe ".ys" do
+    it "should return a hash" do
+      Plugin.ys.should be_kind_of(Hash)
+    end
+
+    it "should provide :max_pages option" do
+      Plugin.ys.should be_include(:max_pages)
+    end
+
+    describe "[:max_pages]" do
+      class NetworkUnreachable
+        include DataMapper::YunkerStar
+        uri "http://merbi.st/plugins/index?page=1*"
+        ys[:max_pages] = 0
+      end
+
+      it "should has 100 as default value" do
+        Plugin.ys[:max_pages].should == 100
+      end
+
+      it "should raise MaxPagesOverflow when count of visited sites exceeds :max_pages value" do
+        lambda {
+          NetworkUnreachable.count
+        }.should raise_error(DataMapper::YunkerStar::Proxy::MaxPagesOverflow)
+      end
+    end
+
+  end
+
+  ######################################################################
+  ### Proxy
+
+  it "should provide .proxy" do
     BlankStyle.should respond_to(:proxy)
   end
 

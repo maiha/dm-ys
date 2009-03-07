@@ -18,9 +18,12 @@ module DataMapper
           dsl_accessor :table
           dsl_accessor :tbody
           dsl_accessor :thead
+          dsl_accessor :ys, :default=>{:max_pages=>100}
           property :id, DataMapper::Types::Serial
         end
       end
+
+      class MaxPagesOverflow < RuntimeError; end
 
       module ClassMethods
         def proxy
