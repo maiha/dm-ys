@@ -33,7 +33,7 @@ AUTHOR = "maiha"
 EMAIL = "maiha@wota.jp"
 HOMEPAGE = "http://github.com/maiha/dm-ys"
 SUMMARY = "a DataMapper extension that uses html table as its schema and data powerfully like YunkerStar"
-GEM_VERSION = "0.4"
+GEM_VERSION = "0.4.1"
 
 spec = Gem::Specification.new do |s|
 #  s.rubyforge_project = 'merb'
