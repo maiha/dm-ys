@@ -39,4 +39,10 @@ describe DataMapper::YS::Proxy  do
     end
   end
 
+  ######################################################################
+  ### Guess tbody
+
+  it "should ignore th columns" do
+    ThStyle.count.should == 2
+  end
 end

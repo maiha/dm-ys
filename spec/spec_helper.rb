@@ -32,6 +32,8 @@ rescue LoadError
 end
 
 mapping = {
+  "http://merbi.st/plugins/" => spec_data_path("plugins1.html"),
+
   # plugin (paginated)
   "http://merbi.st/plugins/index?page=1" => spec_data_path("plugins1.html"),
   "http://merbi.st/plugins/index?page=2" => spec_data_path("plugins2.html"),

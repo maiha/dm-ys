@@ -64,8 +64,31 @@ Append "*" to uri if you want pagination mode.
   => 36
 
 
+Raw Element
+===========
+
+"element_for" method returns raw scraped elements those are currently hpricot elements.
+
+  >> Plugin.names               #=> ["Name", "Repos", "Registeredby", "Description", "col_1"]
+  >> record = Plugin.first      #=> #<Plugin id=1 Name="eventmachine-0.12.5" Repos=...>
+  >> record.Name                #=> "eventmachine-0.12.5"
+  >> record.element_for("Name") #=> {elem td {elem a href"/plugins/36" "eventmachine-0.12.5" a} td}
+  >> record.element_for("Name").class #=> Hpricot::Elem
+
+"link_for" is syntax sugar for extracting href tag from its element.
+
+  >> record.link_for("Name")         #=> "http://merbi.st/plugins/36"
+  >> record.link_for("Registeredby") #=> "http://merbi.st/users/1"
+
+Furthermore, :only_path option can control the fully qualified URL or not.
+
+  >> Plugin.ys[:only_path] = true
+  >> record.link_for("Name")         #=> "/plugins/36"
+  >> record.link_for("Registeredby") #=> "/users/1"
+
+
 TODO
 ====
-* store link information for each columns
+* Feel free to request what you want! :)
 
 Copyright (c) 2008 maiha@wota.jp, released under the MIT license

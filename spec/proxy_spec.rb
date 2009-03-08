@@ -1,26 +1,6 @@
 require File.join( File.dirname(__FILE__), "spec_helper" )
 
 describe DataMapper::YS do
-  class ::BlankHtml
-    include DataMapper::YS
-    uri spec_data_path("blank.html")
-  end
-
-  class ::BlankStyle
-    include DataMapper::YS
-    uri spec_data_path("plugins1.html")
-  end
-
-  class ::TableStyle < BlankStyle
-    uri spec_data_path("plugins1.html")
-    table "table.main"
-  end
-
-  class ::TheadStyle < BlankStyle
-    uri spec_data_path("plugins1.html")
-    thead "table.main"
-  end
-
   ######################################################################
   ### Config
 
@@ -120,6 +100,5 @@ describe DataMapper::YS do
           ["Name", "Repos", "Registered by", "Description", ""]
       end
     end
-
   end
 end

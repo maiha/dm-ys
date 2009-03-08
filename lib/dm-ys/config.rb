@@ -2,7 +2,7 @@ module DataMapper
   module YS
     class Config
       def self.default
-        {:max_pages=>100, :uniq=>true}
+        {:max_pages=>100, :uniq=>true, :only_path=>false}
       end
  
       def initialize(options = nil)
@@ -24,6 +24,10 @@ module DataMapper
 
       def uniq_entry?
         self[:uniq] == true or self[:uniq] == :entry
+      end
+
+      def only_path?
+        !!self[:only_path]
       end
     end
   end

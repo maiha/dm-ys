@@ -63,6 +63,15 @@ describe DataMapper::YS::Config do
       config = DataMapper::YS::Config.new(:uniq=>false)
       config.uniq_entry?.should == false
     end
+  end
 
+  it "should provide #only_path?" do
+    @config.should respond_to(:only_path?)
+  end
+
+  describe "[:only_path]" do
+    it "should has false as default value" do
+      @config[:only_path].should == false
+    end
   end
 end

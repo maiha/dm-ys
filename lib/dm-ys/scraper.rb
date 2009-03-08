@@ -68,6 +68,10 @@ module DataMapper
           @uri || @model.uri.to_s.chomp('*')
         end
 
+        def base_uri
+          URI.parse(uri.split('?').first)
+        end
+
         def register_properties!
           names.each do |name|
             type = String         # TODO
@@ -95,7 +99,7 @@ module DataMapper
         end
 
         def pagination_links
-          base = URI.parse(uri.split('?').first)
+          base = base_uri
           urls = (doc / "a").map{|i| i[:href] =~ /^http/ ? i[:href] : (base+i[:href]).to_s}.uniq
           urls.select{|url| /^#{Regexp.escape(base.to_s)}/ === url}
         end
@@ -122,12 +126,17 @@ module DataMapper
           labels   {thead.search("> tr").first.search("> td|th").map{|i|strip_tags(i.inner_html)}}
           records  {
             tbody.search("> tr").map do |tr|
-              elems  = tr.search("> td")
-              values = elems.map{|i|strip_tags(i.inner_html)}
+              elems = tr.search("> td")
+              next if elems.blank? # ignored because this should be TH columns
+
+              values   = elems.map{|i|strip_tags(i.inner_html)}
+              elements = Hash[*names.zip(elems).flatten]
+
               record = @model.new(Hash[*names.zip(values).flatten])
-              record.elements = Hash[*names.zip(elems).flatten]
+              record.elements = elements
+              record.links = names.inject({}){|h,name| h[name] = links_for(elements[name]); h}
               record
-            end
+            end.compact
           }
         end
 
@@ -183,6 +192,17 @@ module DataMapper
 
           def strip_tags(html)
             html.gsub(/<.*?>/, '').strip
+          end
+
+          def links_for(element)
+            case element
+            when Hpricot::Elem
+              return Array(element.search("a")).map{|i| i[:href]}
+            when Hpricot::Elements
+              return element.map{|e| links_for(e)}.flatten
+            else
+              return []
+            end
           end
       end
 
