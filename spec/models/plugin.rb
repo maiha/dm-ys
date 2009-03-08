@@ -19,16 +19,12 @@ class SortedPlugin
   ys[:uniq] = false
 end
 
-class SortedPlugin1
-  include DataMapper::YS
+class SortedPlugin1 < SortedPlugin
   uri "http://merbi.st/plugins/sorted?page=1"
-  ys[:uniq] = false
 end
 
-class SortedPlugin2
-  include DataMapper::YS
+class SortedPlugin2 < SortedPlugin
   uri "http://merbi.st/plugins/sorted?page=2"
-  ys[:uniq] = false
 end
 
 class SortedPluginWithUniqPage

@@ -29,6 +29,10 @@ module DataMapper
       def [](key)
         attributes[normalized_property_for(key)]
       end
+
+      def <=>(other)
+        id<=>other.id
+      end
     end
 
   end

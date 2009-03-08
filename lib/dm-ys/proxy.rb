@@ -39,7 +39,7 @@ module DataMapper
         end
 
         def records
-          proxy.records
+          @records ||= (proxy.records.each_with_index{|r,i| r.id = i+1}; proxy.records)
         end
 
         def count
@@ -47,15 +47,7 @@ module DataMapper
         end
 
         def all
-          unless @records
-            @records = []
-            records.each_with_index do |values, id|
-              record = new(Hash[*names.zip(values).flatten].merge(:id=>id+1))
-              record.elements = proxy.element_for(values)
-              @records << record
-            end
-          end
-          @records
+          records
         end
 
         def first

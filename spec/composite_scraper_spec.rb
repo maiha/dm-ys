@@ -5,6 +5,10 @@ describe DataMapper::YS::Scraper::Composite do
     @scraper = DataMapper::YS::Scraper::Composite.new(Plugin)
   end
 
+  def strip_id(records)
+    records.map{|r| r = r.dup; r.attributes[:id] = nil; r}
+  end
+
   it "should provide #uri" do
     @scraper.should respond_to(:uri)
   end
@@ -63,7 +67,8 @@ describe DataMapper::YS::Scraper::Composite do
 
   describe "#records" do
     it "should return same value as Plugin" do
-      @scraper.records.should == (Plugin1.records + Plugin2.records)
+      @scraper.records.map(&:Name).should ==
+        Plugin1.records.map(&:Name) + Plugin2.records.map(&:Name)
     end
   end
 
@@ -74,7 +79,8 @@ describe DataMapper::YS::Scraper::Composite do
 
     describe "#records" do
       it "should return duplicate records" do
-        SortedPlugin.records.sort.should == ((SortedPlugin1.records + SortedPlugin2.records)*3).sort
+        total = SortedPlugin1.records.map{|i|i[1]} + SortedPlugin2.records.map{|i|i[1]}
+        SortedPlugin.records.map{|i|i[1]}.sort.should == (total*3).sort
       end
     end
 
@@ -92,7 +98,8 @@ describe DataMapper::YS::Scraper::Composite do
 
     describe "#records" do
       it "should return same value as Plugin" do
-        SortedPluginWithUniqPage.records.should == (SortedPlugin1.records + SortedPlugin2.records)
+        SortedPluginWithUniqPage.records.map{|i|i[1]}.sort.should ==
+          (SortedPlugin1.records.map{|i|i[1]} + SortedPlugin2.records.map{|i|i[1]}).sort
       end
     end
 
@@ -102,20 +109,4 @@ describe DataMapper::YS::Scraper::Composite do
       end
     end
   end
-
-  describe "UniqPlugin" do
-    it "should return 2 pages" do
-      UniqPlugin.proxy.pages.size.should == 2
-    end
-
-    describe "#count" do
-      it "should return same value as Plugin" do
-        UniqPlugin1.count.should == 20
-        UniqPlugin2.count.should == 4
-        UniqPlugin .count.should == 22
-      end
-    end
-  end
-
-
 end

@@ -110,13 +110,7 @@ module DataMapper
         end
 
         def page_hash
-          body = records.flatten.join("\t")
-          Digest::SHA1.hexdigest(body)
-        end
-
-        def element_for(record)
-          parse_tbody
-          @record2elements[record]
+          Digest::SHA1.hexdigest(tbody.inspect)
         end
 
         cached_accessor do
@@ -126,17 +120,13 @@ module DataMapper
           tbody    {specified(:tbody) or table.search("> tbody").first or table}
           names    {labels.map{|i| label2name(i)}}
           labels   {thead.search("> tr").first.search("> td|th").map{|i|strip_tags(i.inner_html)}}
-          records  {parse_tbody; @records}
-
-          parse_tbody {
-            @record2elements = {}
-            @records  = []
-            tbody.search("> tr").each do |tr|
+          records  {
+            tbody.search("> tr").map do |tr|
               elems  = tr.search("> td")
-              record = elems.map{|i|strip_tags(i.inner_html)}
-              # .delete_if{|i|i.blank?}
-              @record2elements[record] = elems
-              @records << record
+              values = elems.map{|i|strip_tags(i.inner_html)}
+              record = @model.new(Hash[*names.zip(values).flatten])
+              record.elements = Hash[*names.zip(elems).flatten]
+              record
             end
           }
         end
@@ -218,7 +208,7 @@ module DataMapper
           pages.each do |page|
             page.records.each do |entry|
               if config.uniq_entry?
-                sha1 = Digest::SHA1.hexdigest(entry.join("\t"))
+                sha1 = entry.attributes.merge(:id=>nil).inspect
                 next if digests.include?(sha1)
                 digests << sha1
               end
@@ -226,14 +216,6 @@ module DataMapper
             end
           end
           return records
-        end
-
-        def element_for(record)
-          pages.each do |page|
-            element = page.element_for(record)
-            return element if element
-          end
-          return nil
         end
 
         private
