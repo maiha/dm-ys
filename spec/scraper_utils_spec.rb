@@ -24,6 +24,10 @@ describe DataMapper::YS::Scraper::Utils  do
       constantize("a&nbsp;b").should == 'ab'
     end
 
+    it "should strip +" do
+      constantize("C+A C+A san").should == 'CACAsan'
+    end
+
     it "should strip spaces and signs" do
       label = "EventMachine: fast, simple event-processing library for Ruby programs"
       expected = "EventMachinefastsimpleeventprocessinglibraryforRubyprograms"

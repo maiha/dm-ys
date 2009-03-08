@@ -37,7 +37,7 @@ module DataMapper
           label.gsub!(/&[a-z]+;/, '')
           label.gsub!(/\r?\n/, '')
           label.gsub!(/\s+/,'')
-          label.delete!('!"#$%&()=~|`{}^-[]/<>:;,.\\-')
+          label.delete!('!"#$%&()=~|`{}^-[]/<>:;,.+\\-')
           label.delete!("'")
           return label
         end
